@@ -132,5 +132,3 @@ export function getSorter(algoName) {
     default: return bubbleSort;
   }
 }
-EOFJS
-echo "sorting.js created"
