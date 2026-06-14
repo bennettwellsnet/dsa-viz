@@ -180,9 +180,11 @@ function initPathfinding() {
 }
 
 function init() {
-  // Tabs
-  document.getElementById('tab-sorting').onclick = () => switchTab('sorting');
-  document.getElementById('tab-path').onclick = () => switchTab('path');
+  // Tabs (null-guarded in case IDs are absent)
+  const tabSorting = document.getElementById('tab-sorting');
+  const tabPath = document.getElementById('tab-path');
+  if (tabSorting) tabSorting.onclick = () => switchTab('sorting');
+  if (tabPath) tabPath.onclick = () => switchTab('path');
 
   initSorting();
   initPathfinding();
