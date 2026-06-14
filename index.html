@@ -7,7 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
     body { font-family: 'Inter', system_ui, sans-serif; }
     .font-display { font-family: 'Space Grotesk', 'Inter', system_ui, sans-serif; font-weight: 600; }
     canvas { border: 1px solid #27272a; background: #111113; }
@@ -26,8 +26,8 @@
         </div>
       </div>
       <div class="flex items-center gap-x-6 text-sm">
-        <a href="#sorting" class="hover:text-white transition">Sorting</a>
-        <a href="#path" class="hover:text-white transition">Pathfinding</a>
+        <a href="#sorting" id="tab-sorting" class="hover:text-white transition">Sorting</a>
+        <a href="#path" id="tab-path" class="hover:text-white transition">Pathfinding</a>
         <a href="https://github.com/bennettwellsnet/dsa-viz" target="_blank" class="flex items-center gap-x-1.5 text-zinc-400 hover:text-white">
           <i class="fa-brands fa-github"></i>
           <span class="hidden sm:inline">GitHub</span>
