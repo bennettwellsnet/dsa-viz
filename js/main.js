@@ -28,9 +28,8 @@ function drawPathfinding(canvas, grid, visited, path, start, end) {
   const rows = grid.length, cols = grid[0].length;
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const x = c * cell, y = r * cell;
       ctx.fillStyle = grid[r][c] === 1 ? '#374151' : '#1f2937';
-      ctx.fillRect(x, y, cell - 1, cell - 1);
+      ctx.fillRect(c * cell, r * cell, cell - 1, cell - 1);
     }
   }
   visited.forEach(([r,c]) => {
@@ -54,7 +53,6 @@ function initSorting() {
   const speedSlider = document.getElementById('sort-speed');
   const metricsEl = document.getElementById('sort-metrics');
   let array = generateArray(parseInt(sizeSlider.value));
-  let sorter = null;
   let stepGen = null;
 
   function reset() {
@@ -78,32 +76,21 @@ function initSorting() {
       return;
     }
     const algo = algoSelect.value;
-    const sorterFn = getSorter(algo);
-    stepGen = sorterFn(sortingState.array);
+    stepGen = getSorter(algo)(sortingState.array);
     sortingState.playing = true;
     const delay = 1000 / parseInt(speedSlider.value);
     sortingState.interval = setInterval(() => {
       const step = stepGen.next();
-      if (step.done) {
-        sortingState.playing = false;
-        clearInterval(sortingState.interval);
-        return;
-      }
+      if (step.done) { sortingState.playing = false; clearInterval(sortingState.interval); return; }
       const s = step.value;
-      if (s.type === 'compare' || s.type === 'swap') {
-        drawSorting(canvas, sortingState.array, s.indices);
-      } else if (s.type === 'set' || s.type === 'sorted') {
-        drawSorting(canvas, sortingState.array, [], [s.index]);
-      }
+      if (s.type === 'compare' || s.type === 'swap') drawSorting(canvas, sortingState.array, s.indices);
+      else if (s.type === 'set' || s.type === 'sorted') drawSorting(canvas, sortingState.array, [], [s.index]);
       updateMetrics(metricsEl, { Comparisons: Math.floor(Math.random()*200), Swaps: Math.floor(Math.random()*50), 'Current Step': sortingState.currentStep++ });
     }, delay);
   };
 
   document.getElementById('sort-step').onclick = () => {
-    if (!stepGen) {
-      const algo = algoSelect.value;
-      stepGen = getSorter(algo)([...sortingState.array]);
-    }
+    if (!stepGen) stepGen = getSorter(algoSelect.value)([...sortingState.array]);
     const step = stepGen.next();
     if (!step.done) {
       const s = step.value;
@@ -111,9 +98,6 @@ function initSorting() {
       else drawSorting(canvas, sortingState.array);
     }
   };
-
-  algoSelect.onchange = () => {};
-  speedSlider.oninput = () => {};
 
   drawSorting(canvas, array);
   updateMetrics(metricsEl, { Comparisons: 0, Swaps: 0, 'Current Step': 0 });
@@ -128,6 +112,7 @@ function initPathfinding() {
   pathState.start = [2,2];
   pathState.end = [12,22];
   let mode = 'wall';
+  let rafId = null;
 
   function draw() {
     drawPathfinding(canvas, pathState.grid, [], [], pathState.start, pathState.end);
@@ -138,13 +123,9 @@ function initPathfinding() {
     const col = Math.floor((e.clientX - rect.left) / cell);
     const row = Math.floor((e.clientY - rect.top) / cell);
     if (row < 0 || row >= 15 || col < 0 || col >= 25) return;
-    if (mode === 'wall') {
-      pathState.grid[row][col] = pathState.grid[row][col] ? 0 : 1;
-    } else if (mode === 'start') {
-      pathState.start = [row, col];
-    } else if (mode === 'end') {
-      pathState.end = [row, col];
-    }
+    if (mode === 'wall') pathState.grid[row][col] = pathState.grid[row][col] ? 0 : 1;
+    else if (mode === 'start') pathState.start = [row, col];
+    else if (mode === 'end') pathState.end = [row, col];
     draw();
   });
 
@@ -153,38 +134,50 @@ function initPathfinding() {
   document.getElementById('path-mode-end').onclick = () => mode = 'end';
 
   document.getElementById('path-run').onclick = () => {
-    const algo = document.getElementById('path-algo').value;
-    const finder = getPathfinder(algo);
-    const steps = [];
-    for (const step of finder(pathState.grid, pathState.start, pathState.end)) {
-      steps.push(step);
-    }
+    // Cancel any existing animation
+    if (rafId) cancelAnimationFrame(rafId);
 
-    // Draw initial grid state
+    const finder = getPathfinder(document.getElementById('path-algo').value);
+    const steps = [...finder(pathState.grid, pathState.start, pathState.end)];
+    const visitSteps = steps.filter(s => s.type === 'visit');
+    const pathStep = steps.find(s => s.type === 'path');
+
+    // Draw initial grid
     draw();
 
+    // Use rAF to animate ~20 visited cells per frame (smooth, throttle-resistant)
     let i = 0;
-    const iv = setInterval(() => {
-      if (i >= steps.length) { clearInterval(iv); return; }
-      const s = steps[i++];
-      if (s.type === 'visit') {
-        // Draw visited cell incrementally
+    const CELLS_PER_FRAME = 20;
+
+    function animate() {
+      const end = Math.min(i + CELLS_PER_FRAME, visitSteps.length);
+      for (; i < end; i++) {
+        const [r, c] = visitSteps[i].pos;
         ctx.fillStyle = '#3b82f6';
-        ctx.fillRect(s.pos[1] * cell, s.pos[0] * cell, cell - 1, cell - 1);
-        // Keep start/end visible
-        ctx.fillStyle = '#f97316';
-        ctx.fillRect(pathState.start[1] * cell, pathState.start[0] * cell, cell - 1, cell - 1);
-        ctx.fillStyle = '#ef4444';
-        ctx.fillRect(pathState.end[1] * cell, pathState.end[0] * cell, cell - 1, cell - 1);
+        ctx.fillRect(c * cell, r * cell, cell - 1, cell - 1);
       }
-      if (s.type === 'path') {
-        const visitedCells = steps.filter(x => x.type === 'visit').map(x => x.pos);
-        drawPathfinding(canvas, pathState.grid, visitedCells, s.path, pathState.start, pathState.end);
+      // Keep start/end visible
+      ctx.fillStyle = '#f97316';
+      ctx.fillRect(pathState.start[1] * cell, pathState.start[0] * cell, cell - 1, cell - 1);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(pathState.end[1] * cell, pathState.end[0] * cell, cell - 1, cell - 1);
+
+      if (i < visitSteps.length) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        // All visited drawn — now flash the path
+        if (pathStep) {
+          drawPathfinding(canvas, pathState.grid, visitSteps.map(s => s.pos), pathStep.path, pathState.start, pathState.end);
+        }
+        rafId = null;
       }
-    }, 10); // 10ms per step — fast enough to see the animation
+    }
+
+    rafId = requestAnimationFrame(animate);
   };
 
   document.getElementById('path-clear').onclick = () => {
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
     pathState.grid = createGrid(15, 25);
     draw();
   };
@@ -193,7 +186,6 @@ function initPathfinding() {
 }
 
 function init() {
-  // Tabs (null-guarded in case IDs are absent)
   const tabSorting = document.getElementById('tab-sorting');
   const tabPath = document.getElementById('tab-path');
   if (tabSorting) tabSorting.onclick = () => switchTab('sorting');
@@ -202,7 +194,6 @@ function init() {
   initSorting();
   initPathfinding();
 
-  // Complexity estimator
   const sizeInput = document.getElementById('complexity-size');
   const out = document.getElementById('complexity-out');
   if (sizeInput && out) {
@@ -213,11 +204,11 @@ function init() {
     sizeInput.oninput();
   }
 
-  console.log('%c[DSA Viz] Interactive visualizers ready. Sorting + Pathfinding powered by step generators.', 'color:#64748b');
+  console.log('%c[DSA Viz] Interactive visualizers ready.', 'color:#64748b');
 }
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
 } else {
   init();
-    }
+                            }
