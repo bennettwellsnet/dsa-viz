@@ -4,7 +4,7 @@
   <script>if(location.pathname.startsWith('/dsa-viz')){document.write('<base href="/dsa-viz/">')};</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DSA Viz • Interactive Data Structures & Algorithms</title>
+  <title>DSA Viz â¢ Interactive Data Structures & Algorithms</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
@@ -27,6 +27,7 @@
         </div>
       </div>
       <div class="flex items-center gap-x-6 text-sm">
+        <a href="https://bennettwells.net/projects" class="text-zinc-400 hover:text-white transition">← Projects</a>
         <a href="#sorting" id="tab-sorting" class="hover:text-white transition">Sorting</a>
         <a href="#path" id="tab-path" class="hover:text-white transition">Pathfinding</a>
         <a href="https://github.com/bennettwellsnet/dsa-viz" target="_blank" class="flex items-center gap-x-1.5 text-zinc-400 hover:text-white">
@@ -53,7 +54,7 @@
   <div id="sorting" class="max-w-6xl mx-auto px-6 py-8 border-t border-white/10">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-3xl font-semibold">Sorting Visualizer</h2>
-      <div class="text-xs px-3 py-1 bg-white/5 rounded-full border border-white/10">5 algorithms • Real-time</div>
+      <div class="text-xs px-3 py-1 bg-white/5 rounded-full border border-white/10">5 algorithms â¢ Real-time</div>
     </div>
 
     <div class="grid lg:grid-cols-3 gap-6">
@@ -62,11 +63,11 @@
         <div>
           <label class="text-xs text-zinc-400">Algorithm</label>
           <select id="sort-algo" class="w-full bg-black border border-white/10 rounded-2xl px-4 py-2 mt-1">
-            <option value="bubble">Bubble Sort — O(n²)</option>
-            <option value="selection">Selection Sort — O(n²)</option>
-            <option value="insertion">Insertion Sort — O(n²)</option>
-            <option value="merge">Merge Sort — O(n log n)</option>
-            <option value="quick">Quick Sort — O(n log n) avg</option>
+            <option value="bubble">Bubble Sort â O(nÂ²)</option>
+            <option value="selection">Selection Sort â O(nÂ²)</option>
+            <option value="insertion">Insertion Sort â O(nÂ²)</option>
+            <option value="merge">Merge Sort â O(n log n)</option>
+            <option value="quick">Quick Sort â O(n log n) avg</option>
           </select>
         </div>
         <div>
@@ -92,18 +93,18 @@
       <!-- Canvas -->
       <div class="lg:col-span-2 bg-zinc-950 border border-white/10 rounded-3xl p-4">
         <canvas id="sort-canvas" width="720" height="320" class="w-full rounded-2xl"></canvas>
-        <div class="text-[10px] text-zinc-500 mt-2 px-1">Blue = comparing • Orange = swapping • Green = sorted</div>
+        <div class="text-[10px] text-zinc-500 mt-2 px-1">Blue = comparing â¢ Orange = swapping â¢ Green = sorted</div>
       </div>
     </div>
 
-    <div class="mt-4 text-xs text-zinc-400">Tip: Larger arrays highlight the difference between O(n²) and O(n log n) algorithms.</div>
+    <div class="mt-4 text-xs text-zinc-400">Tip: Larger arrays highlight the difference between O(nÂ²) and O(n log n) algorithms.</div>
   </div>
 
   <!-- Pathfinding -->
   <div id="path" class="max-w-6xl mx-auto px-6 py-8 border-t border-white/10">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-3xl font-semibold">Pathfinding Visualizer</h2>
-      <div class="text-xs px-3 py-1 bg-white/5 rounded-full border border-white/10">4 algorithms • Editable grid</div>
+      <div class="text-xs px-3 py-1 bg-white/5 rounded-full border border-white/10">4 algorithms â¢ Editable grid</div>
     </div>
 
     <div class="grid lg:grid-cols-3 gap-6">
@@ -111,10 +112,10 @@
         <div>
           <label class="text-xs text-zinc-400">Algorithm</label>
           <select id="path-algo" class="w-full bg-black border border-white/10 rounded-2xl px-4 py-2 mt-1">
-            <option value="bfs">BFS — Unweighted shortest path</option>
-            <option value="dfs">DFS — Depth first (not optimal)</option>
-            <option value="dijkstra">Dijkstra — Weighted</option>
-            <option value="astar">A* — Heuristic guided</option>
+            <option value="bfs">BFS â Unweighted shortest path</option>
+            <option value="dfs">DFS â Depth first (not optimal)</option>
+            <option value="dijkstra">Dijkstra â Weighted</option>
+            <option value="astar">A* â Heuristic guided</option>
           </select>
         </div>
         <div class="text-xs text-zinc-400">Click grid to toggle walls. Use mode buttons to set start/end.</div>
@@ -153,12 +154,12 @@
       </div>
       <div id="complexity-out" class="font-mono text-sm bg-zinc-950 px-4 py-2 rounded-2xl border border-white/10 min-w-[220px]"></div>
     </div>
-    <div class="text-[10px] text-zinc-500 mt-2">See why O(n log n) beats O(n²) at scale. Real engineering decisions.</div>
+    <div class="text-[10px] text-zinc-500 mt-2">See why O(n log n) beats O(nÂ²) at scale. Real engineering decisions.</div>
   </div>
 
   <div class="max-w-6xl mx-auto px-6 py-8 border-t border-white/10 text-xs text-zinc-400">
     Built with modular ES6 JS + Canvas. All algorithms implemented from scratch for learning. 
-    Repo: <a href="https://github.com/bennettwellsnet/dsa-viz" class="underline">bennettwellsnet/dsa-viz</a> • 
+    Repo: <a href="https://github.com/bennettwellsnet/dsa-viz" class="underline">bennettwellsnet/dsa-viz</a> â¢ 
     Live at <a href="https://bennettwells.net/dsa-viz" class="underline">bennettwells.net/dsa-viz</a> (separate worker + pages).
   </div>
 
