@@ -1,3 +1,12 @@
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 /**
  * ui.js
  * Shared UI helpers, tab switching, metrics.
@@ -11,5 +20,5 @@ export function switchTab(tab) {
 
 export function updateMetrics(el, data) {
   if (!el) return;
-  el.innerHTML = Object.entries(data).map(([k,v]) => `<div><span class="text-zinc-400">${k}:</span> <span class="font-semibold">${v}</span></div>`).join('');
+  el.innerHTML = Object.entries(data).map(([k,v]) => `<div><span class="text-zinc-400">${escapeHtml(k)}:</span> <span class="font-semibold">${escapeHtml(String(v))}</span></div>`).join('');
 }
